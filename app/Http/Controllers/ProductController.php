@@ -42,6 +42,7 @@ class ProductController extends Controller
     {
         $this->validate($request, [
             "image" => "required|image|mimes:png,jpg,jpeg",
+            "barcode" => "required|regex:/^[0-9]+$/|max:15|unique:products,barcode",
             "name" => "required",
             "qty" => "required|integer",
             "price" => "required|integer",
@@ -87,6 +88,7 @@ class ProductController extends Controller
     {
         $this->validate($request, [
             "image" => "image|mimes:png,jpg,jpeg",
+            "barcode" => "required|regex:/^[0-9]+$/|max:15",
             "name" => "required",
             "qty" => "required|integer",
             "price" => "required|integer",

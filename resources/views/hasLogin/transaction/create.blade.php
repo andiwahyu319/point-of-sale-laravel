@@ -1,41 +1,35 @@
 @extends('layouts.hasLogin')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row mb-2">
-        <div class="col">
-            <h1>New Transaction</h1>
-        </div>
+<div id="app">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">New Transaction</h1>
     </div>
-</div>
-<div id="app" class="container">
+
+    <!-- Content Row -->
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
+        <div class="col-md-10">
+            <div class="card shadow mb-4">
                 <form action="{{ url('transaction') }}" method="POST">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">New Transaction</h6>
+                        <button type="submit" class="btn btn-outline-warning btn-sm">Submit</button>
+                    </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col">
-                                @if ($errors->any())
-                                    <div class="alert alert-danger">
-                                        <ul>
-                                            @foreach ($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                @endif
+                            <div class="col-md-6">
+                                <label>Barcode Scanner</label>
+                                <br>
+                                <div id="barcode" style="width: 100%"></div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
+                                <label>Total Price</label>
+                                <br>
+                                <span id="total" class="h2">Rp. 0,-</span>
+                                <hr>
                                 @csrf
                                 <input type="hidden" name="cashier_id" value="{{ Auth::user()->id }}">
-                                <div class="form-group">
-                                    <label>Buyer's Name</label>
-                                    <input type="text" name="buyer" class="form-control" id="buyer"
-                                        placeholder="Enter Buyer's Name" required>
-                                </div>
                                 <div class="form-group">
                                     <label>Payment Via</label>
                                     <select name="payment_via" id="payment_via" class="form-control"
@@ -44,54 +38,44 @@
                                         <option value="credit card">Credit Card</option>
                                     </select>
                                 </div>
-                                <div class="form-group" v-if="payment_via == 'credit card'">
-                                    <label>Credit Card</label>
-                                    <input type="text" name="card" class="form-control" id="card"
-                                        placeholder="Enter Credit Card">
-                                </div>
-                                <button type="button" class="btn btn-outline-info btn-block" @click="showProduct">+ Add
-                                    Product</button>
                                 <input type="hidden" name="cart" :value="datasValue()">
-                            </div>
-                            <div class="col-md-8">
-                                <label>Total Price</label>
-                                <div class="callout callout-success">
-                                    <span id="total" class="h2">Rp. 0,-</span>
-                                </div>
-                                <label>Product Cart</label>
-                                <div class="border border-info" style="min-height: 2em;">
-                                    <ul class="products-list product-list-in-card pl-2 pr-2">
-                                        <li class="item" v-for="(product, index) in datas">
-                                            <div class="product-img">
-                                                <img v-bind:src="productDataById(product.product_id).img" alt="Product Image"
-                                                    class="img-size-50">
-                                            </div>
-                                            <div class="product-info">
-                                                <a href="javascript:void(0)" class="product-title">
-                                                    @{{productDataById(product.product_id).name}}
-                                                    <span class="badge badge-warning float-right">
-                                                        Rp @{{productDataById(product.product_id).price * product.qty}}
-                                                    </span>
-                                                    <span class="badge badge-success float-right">
-                                                        Qty: @{{product.qty}}
-                                                    </span>
-                                                </a>
-                                                <span class="product-description">
-                                                    Price: Rp @{{productDataById(product.product_id).price}} x 
-                                                    @{{product.qty}} = Rp @{{productDataById(product.product_id).price * product.qty}}
-                                                    <a class="float-right btn btn-danger btn-xs" @click="removeProduct(index)">Cancel</a>
-                                                </span>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <button type="submit" class="btn btn-outline-warning float-right">Submit</button>
-                    </div>
                 </form>
+            </div>
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Product Cart</h6>
+                    <button type="button" class="btn btn-outline-info btn-sm" @click="showProduct">+ Add Product manually</button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10px">#</th>
+                                    <th>Product Name</th>
+                                    <th>Price</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(product, index) in datas">
+                                    <th>@{{index + 1}}</th>
+                                    <td><img v-bind:src="productDataById(product.product_id).img" alt="Product Image" class="img-fluid img-thumbnail" 
+                                        width="15px" height="15px"> @{{productDataById(product.product_id).name}}</td>
+                                    <td>Rp @{{productDataById(product.product_id).price}}</td>
+                                    <td>@{{product.qty}}</td>
+                                    <td>Rp @{{productDataById(product.product_id).price * product.qty}}</td>
+                                    <td><button @click="removeProduct(index)" class="btn btn-danger btn-circle btn-sm"><i class="fas fa-trash"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -138,7 +122,7 @@
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-outline-info btn-sm">Add Product</button>
                     </div>
                 </form>
@@ -169,28 +153,35 @@
                         </div>
                     </div>
                     <div class="row justify-content-center">
-                        <div class="products-list product-list-in-modal pl-2 pr-2 col-md-3" v-for="(product, index) in productsSearch">
-                            <div class="item mb-3" @click="selectProduct(index)">
-                                <div class="product-img">
-                                    <img v-bind:src="product.img" alt="Product Image"
-                                        class="img-size-50" loading="lazy">
-                                </div>
-                                <div class="product-info">
-                                    <a href="javascript:void(0)" class="product-title">
-                                        @{{product.name}}
-                                    </a>
-                                    <span class="product-description">
-                                        Price: Rp @{{product.price}}<br>
-                                        Qty: @{{product.qty}}<br>
-                                        <span class="text-warning">Click For Select</span>
-                                    </span>
-                                </div>
+                        <div class="col col-md-11">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Product Name</th>
+                                            <th>Price</th>
+                                            <th>Qty</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(product, index) in productsSearch">
+                                            <th scope="row">@{{index + 1}}</th>
+                                            <td><img v-bind:src="product.img" alt="Product Image"
+                                                class="img-fluid img-thumbnail" height="25px" loading="lazy"> @{{product.name}}</td>
+                                            <td>Rp @{{product.price}}</td>
+                                            <td>@{{product.qty}}</td>
+                                            <td><button @click="selectProduct(index)" class="btn btn-info btn-circle btn-sm"><i class="fas fa-plus"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -201,6 +192,39 @@
 @endsection
 
 @section("js")
+<script src="{{ asset('assets/vendor/vue/vue.global.min.js') }}"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script>
+    // https://github.com/mebjas/html5-qrcode
+    function onScanSuccess(decodedText, decodedResult) {
+        scanned = decodedResult.decodedText;
+        console.log(scanned);
+        products = controller.products;
+        for (let index = 0; index < products.length; index++) {
+            const product = products[index];
+            if (product.barcode == scanned) {
+                controller.alert = "";
+                controller.selected = product.id;
+                $("#qty").val(1);
+                $("#modal").modal();
+                scanner.pause(true);
+                setTimeout(() => {
+                    scanner.resume();
+                }, 5000);
+            }
+        }
+    }
+    let config = { 
+        fps: 10,
+        qrbox : { width:250, height: 50 },
+        aspectRatio: 1.777778,
+        supportedScanTypes: [
+            Html5QrcodeScanType.SCAN_TYPE_CAMERA
+        ],
+     }
+    var scanner = new Html5QrcodeScanner("barcode", config);
+    scanner.render(onScanSuccess);
+</script>
 <script>
     const {
         createApp

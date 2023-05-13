@@ -17,8 +17,8 @@ class StaffSeeder extends Seeder
     public function run()
     {
         User::factory()->create([
-            "name" => "Andi Wahyu",
-            "email" => "a.wahyukhusnulmalik@gmail.com",
+            "name" => "First Cashier",
+            "email" => "cashier@adhaya.com",
             "password" => Hash::make("1234567890")
         ]);
     }

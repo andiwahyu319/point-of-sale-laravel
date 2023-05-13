@@ -15,12 +15,14 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->string('barcode', 15);
             $table->string('name', 64);
             $table->string('img', 64);
             $table->integer('qty');
             $table->integer('price');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->timestamps();
+            $table->softDeletes()->nullable();
         });
     }
 

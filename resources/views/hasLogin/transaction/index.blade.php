@@ -1,43 +1,37 @@
 @extends('layouts.hasLogin')
 
-@section('css')
-<link rel="stylesheet" href="{{ asset('assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
+@section("css")
+<link href="{{ asset('assets/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
+<link href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css" rel="stylesheet">
 @endsection
 
 @section('content')
-<div class="container-fluid">
-    <div class="row mb-2">
-        <div class="col">
-            <h1>Transaction</h1>
-        </div>
+<div id="app">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Transaction</h1>
+        <a href="{{url('transaction/create')}}" class="btn btn-secondary">Create new</a>
     </div>
-</div>
-<div id="app" class="container">
+
+    <!-- Content Row -->
     <div class="row justify-content-center">
         <div class="col-md-10">
-            <div class="card">
-                <div class="card-header row text-bold">
-                    <div class="col">Data Transaction</div>
-                    <div class="col d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{{url('transaction/create')}}" class="btn btn-outline-primary">Create new</a>
-                    </div>
-                </div>
+            <div class="card shadow">
                 <div class="card-body">
-                    <table id="datatable" class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th style="width: 10px">#</th>
-                                <th>Buyer</th>
-                                <th>Total Price</th>
-                                <th>Payment Via</th>
-                                <th>Action</th>
-                                <th>Created At</th>
-                                <th>Cashier</th>
-                            </tr>
-                        </thead>
-                    </table>
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10px">#</th>
+                                    <th>Cashier</th>
+                                    <th>Total Price</th>
+                                    <th>Payment Via</th>
+                                    <th>Created At</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -53,9 +47,9 @@
                 </div>
                 <div class="modal-body card p-0">
                     <div class="card-body">
-                        <ul class="list-group list-group-unbordered mb-3">
+                        <ul class="list-group list-group-flush mb-3">
                             <li class="list-group-item">
-                                <b>Buyer</b> <a class="float-right">@{{data.buyer}}</a>
+                                <b>Cashier</b> <a class="float-right">@{{data.cashier}}</a>
                             </li>
                             <li class="list-group-item">
                                 <b>Total</b> <a class="float-right">Rp @{{data.total}}</a>
@@ -63,38 +57,32 @@
                             <li class="list-group-item">
                                 <b>Payment Via</b> <a class="float-right">@{{data.payment_via}}</a>
                             </li>
-                            <li class="list-group-item" v-if="data.payment_via == 'credit card'">
-                                <b>Card</b> <a class="float-right">@{{data.card}}</a>
-                            </li>
                         </ul>
                         <b>Product Buy</b>
-                        <div class="row">
-                            <div class="col-md-6" v-for="product in data.cart">
-                                <div class="card">
-                                    <div class="card-header p-1">
-                                        <a class="card-title text-center">@{{product.name}}</a>
-                                    </div>
-                                    <div class="card-body p-2">
-                                        <div class="row">
-                                            <div class="col-4">
-                                                <img v-bind:src="product.img" alt="Product image" class="img-fluid img-thumbnail">
-                                            </div>
-                                            <div class="col-8">
-                                                <p class="card-text text-sm">
-                                                    Price: Rp @{{product.price}}<br>
-                                                    Qty: @{{product.qty}}<br>
-                                                    Total: Rp @{{product.total}}<br>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Product Name</th>
+                                        <th>Price</th>
+                                        <th>Qty</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="product in data.cart">
+                                        <td><img v-bind:src="product.img" class="img img-fluid img-thumbnail" alt="Product image" width="25px" height="25px"> @{{product.name}}</td>
+                                        <td>Rp @{{product.price}}</td>
+                                        <td>@{{product.qty}}</td>
+                                        <td>Rp @{{product.total}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
                     <a :href="editUrl" class="btn btn-outline-warning">Edit / Delete</a>
                 </div>
             </div>
@@ -106,30 +94,55 @@
 @endsection
 
 @section("js")
-<script src="{{ asset('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('assets/vendor/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('assets/vendor/vue/vue.global.min.js') }}"></script>
+<script src="{{ asset('assets/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
 <script>
     var columns = [
         {render: function (index, row, data, meta) { 
             return  meta.row + 1
         }, orderable: true},
-        {data: "buyer", orderable: true},
+        {data: "cashier", orderable: false},
         {data: "total", render: function ( data, type, row ) {
             return "Rp. " + data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + ",-"
         }, orderable: true},
         {data: "payment_via", orderable: false},
-        {render: function (index, row, data, meta) {
-            return "<button class='btn btn-outline-info btn-xs' onclick='controller.showData(" + meta.row + ")'>Show</button>"
-        }, orderable: false},
         {data: "created_at", render: function ( data, type, row ) {
             return new Date(data).toLocaleString("en-US", { hour12: false })
         }, orderable: true},
-        {data: "cashier", orderable: false}
+        {render: function (index, row, data, meta) {
+            return "<button onclick='controller.showData("+meta.row+")' class='btn btn-primary btn-circle btn-sm' data-container='body' data-toggle='popover' data-trigger='hover' data-placement='bottom' data-content='Show'><i class='fas fa-eye'></i></button>"
+        }, orderable: false},
     ];
+    var buttons = [
+            {
+                extend: "copyHtml5",
+                text: "Copy",
+                header: "Transaction Data",
+                messageTop: "Transaction Data",
+                title: "Transaction Data"
+            },
+            {
+                extend: "excelHtml5",
+                text: "Excel",
+                filename: "Transaction Data",
+                header: "Transaction Data",
+                messageTop: "Transaction Data"
+            },
+            {
+                extend: "pdfHtml5",
+                text: "PDF",
+                filename: "Transaction Data",
+                orientation: "portrait",
+                pageSize: "A4",
+                title: "Transaction Data"
+            },
+        ]
 
     const {
         createApp
@@ -157,7 +170,9 @@
                         url: this.apiUrl,
                         dataSrc: "",
                     },
-                    columns: columns
+                    columns: columns,
+                    dom: "Bfrtip",
+                    buttons: buttons
                 }).on("xhr", function () {
                     _this.datas = _this.table.ajax.json();
                 });

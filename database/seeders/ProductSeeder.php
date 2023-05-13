@@ -7,6 +7,7 @@ use Faker\Factory as Faker;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Console\Command;
 
 class ProductSeeder extends Seeder
 {
@@ -29,11 +30,16 @@ class ProductSeeder extends Seeder
         for ($i=0; $i < 30; $i++) {
             $pro = $array_product[array_rand($array_product)];
             $product_name = $adjective[array_rand($adjective)] . " " . $material[array_rand($material)] . " " . $pro;
-            $url = "https://source.unsplash.com/random/250x250/?" . $pro;
+            
+            $this->command->line("Try save (" . $i . ")" . $product_name);
+            
+            $url = "https://source.unsplash.com/random/50x50/?" . $pro;
             $contents = file_get_contents($url);
             $image = str_replace(" ", "_", $product_name) . ".jpg";
             Storage::put("images/product/" . $image, $contents);
+
             $product = new Product;
+            $product->barcode = $faker->isbn10();
             $product->name = $product_name;
             $product->img = $image;
             $product->qty = rand(1, 30);

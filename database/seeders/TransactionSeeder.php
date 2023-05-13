@@ -18,14 +18,16 @@ class TransactionSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
+        $date = array();
+        for ($i=0; $i < 10; $i++) { 
+            array_push($date, $faker->dateTimeBetween('-1 week', '+1 week'));
+        }
+        $date_sort = sort($date);
         for ($i=0; $i < 10; $i++) {
-            $via = ['cash', 'credit card'];
-            $via = $via[array_rand($via)];
             $transaction = new Transaction;
             $transaction->cashier_id = 1;
-            $transaction->buyer = $faker->name;
-            $transaction->payment_via = $via;
-            $transaction->card = ($via == "cash") ? "-" : $faker->creditCardNumber;
+            $transaction->payment_via = (rand(0, 1)) ? "cash" : "credit card";
+            $transaction->created_at = $faker->dateTimeBetween('-1 week', '+1 week');
             $transaction->save();
         };
         for ($i=0; $i < 20; $i++) { 

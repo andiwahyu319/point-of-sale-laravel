@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory;
-    protected $fillable = ["img", "name", "qty", "price", "description"];
+    use HasFactory, SoftDeletes;
+    protected $fillable = ["img", "barcode", "name", "qty", "price", "description"];
 }

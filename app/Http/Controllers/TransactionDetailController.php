@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\TransactionDetail;
 use Illuminate\Http\Request;
 
@@ -44,6 +45,7 @@ class TransactionDetailController extends Controller
             "product_id" => "required|int",
             "qty" => "required|int"
         ]);
+        Product::where("id", $request->product_id)->decrement("qty", $request->qty);
         TransactionDetail::create($request->all());
         return '{"status": "ok"}';
     }
@@ -83,10 +85,12 @@ class TransactionDetailController extends Controller
             "product_id" => "required|int",
             "qty" => "required|int"
         ]);
+        Product::where("id", $transactionDetail->product_id)->increment("qty", $transactionDetail->qty);
         $transactionDetail->update([
             "product_id" => $request->product_id,
             "qty" => $request->qty
         ]);
+        Product::where("id", $request->product_id)->decrement("qty", $request->qty);
         return '{"status": "ok"}';
     }
 
@@ -98,6 +102,7 @@ class TransactionDetailController extends Controller
      */
     public function destroy(TransactionDetail $transactionDetail)
     {
+        Product::where("id", $transactionDetail->product_id)->increment("qty", $transactionDetail->qty);
         $transactionDetail->delete();
         return '{"status": "ok"}';
     }

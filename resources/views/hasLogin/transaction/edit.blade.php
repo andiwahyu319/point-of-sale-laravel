@@ -1,33 +1,26 @@
 @extends('layouts.hasLogin')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
+<link href="{{ asset('assets/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
 @endsection
 
 @section('content')
-<div class="container-fluid">
-    <div class="row mb-2">
-        <div class="col">
-            <h1>Edit Transaction</h1>
-        </div>
+<div id="app">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Edit Transaction</h1>
     </div>
-</div>
-<div id="app" class="container">
+
+    <!-- Content Row -->
     <div class="row justify-content-center">
         <div class="col-md-9">
-            <div class="card mb-3">
+            <div class="card shadow mb-4">
                 <form method="POST">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col-6 card-title"><b>Transaction</b></div>
-                            <div class="col-6">
-                                <div class="d-md-flex justify-content-md-end">
-                                    <button type="button" class="btn btn-outline-danger" @click="deleteAll">Delete</button>
-                                    <button type="submit" class="btn btn-outline-warning">Save</button>
-                                </div>
-                            </div>
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Transaction</h6>
+                        <div>
+                            <button type="button" class="btn btn-outline-danger btn-sm mx-1" @click="deleteAll">Delete</button>
+                            <button type="submit" class="btn btn-outline-warning btn-sm mx-1">Submit</button>
                         </div>
                     </div>
                     <div class="card-body">
@@ -37,15 +30,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Buyer Name</label>
-                                    <input type="text" name="buyer" class="form-control" id="buyer"
-                                        placeholder="Enter Buyer Name" :value="datas.buyer" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
                                     <label>Payment Total</label>
-                                    <div id="total" class="form-control"></div>
+                                    <div id="total" class="h2"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -57,13 +43,6 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group" v-if="datas.payment_via == 'credit card'">
-                                    <label>Credit Card</label>
-                                    <input type="text" name="card" class="form-control" id="card"
-                                        placeholder="Enter Credit Card" :value="datas.card" required>
-                                </div>
-                            </div>
                         </div>
                         <input type="hidden" name="detail" :value="datas.card">
                     </div>
@@ -73,10 +52,12 @@
     </div>
     <div class="row justify-content-center">
         <div class="col-md-9">
-            <div class="card">
-                <div class="card-header">Product Cart</div>
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Product Cart</h6>
+                    <button type="button" class="btn btn-outline-info btn-sm" @click="showAdd">+ Add Product</button>
+                </div>
                 <div class="card-body">
-                    <button type="button" class="btn btn-outline-info btn-block mb-3" @click="showAdd">+ Add Product</button>
                     <table id="datatable" class="table table-bordered">
                         <thead>
                             <tr>
@@ -169,28 +150,35 @@
                         </div>
                     </div>
                     <div class="row justify-content-center">
-                        <div class="products-list product-list-in-modal pl-2 pr-2 col-md-3" v-for="(product, index) in products">
-                            <div class="item mb-3" @click="selectProduct(index)">
-                                <div class="product-img">
-                                    <img v-bind:src="product.img" alt="Product Image"
-                                        class="img-size-50" loading="lazy">
-                                </div>
-                                <div class="product-info">
-                                    <a href="javascript:void(0)" class="product-title">
-                                        @{{product.name}}
-                                    </a>
-                                    <span class="product-description">
-                                        Price: Rp @{{product.price}}<br>
-                                        Qty: @{{product.qty}}<br>
-                                        <span class="text-warning">Click For Select</span>
-                                    </span>
-                                </div>
+                        <div class="col col-md-11">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Product Name</th>
+                                            <th>Price</th>
+                                            <th>Qty</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(product, index) in productsSearch">
+                                            <th scope="row">@{{index + 1}}</th>
+                                            <td><img v-bind:src="product.img" alt="Product Image"
+                                                class="img-fluid img-thumbnail" height="25px" loading="lazy"> @{{product.name}}</td>
+                                            <td>Rp @{{product.price}}</td>
+                                            <td>@{{product.qty}}</td>
+                                            <td><button @click="selectProduct(index)" class="btn btn-info btn-circle btn-sm"><i class="fas fa-plus"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -201,12 +189,13 @@
 @endsection
 
 @section("js")
-<script src="{{ asset('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('assets/vendor/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('assets/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('assets/vendor/vue/vue.global.min.js') }}"></script>
+<script src="{{ asset('assets/vendor/axios/axios.min.js') }}"></script>
+<script>
+    $("[data-toggle='popover']").popover();
+</script>
 <script>
     var columns = [
         {render: function (index, row, data, meta) { 
@@ -221,10 +210,8 @@
             return "Rp. " + data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + ",-"
         }, orderable: true},
         {render: function (index, row, data, meta) {
-            return "<div class='btn-group-vertical'>"
-            + "<button class='btn btn-outline-warning btn-xs' onclick='controller.editCart(" + meta.row + ")'>Edit</button>"
-            + "<button class='btn btn-outline-danger btn-xs' onclick='controller.deleteCart(" + meta.row + ")'>Delete</button>"
-            + "</div>"
+            return " <button onclick='controller.editCart("+meta.row+")' class='btn btn-info btn-circle btn-sm' data-container='body' data-toggle='popover' data-trigger='hover' data-placement='bottom' data-content='Edit'><i class='fas fa-edit'></i></button>"
+            + " <button onclick='controller.deleteCart("+meta.row+")' class='btn btn-danger btn-circle btn-sm' data-container='body' data-toggle='popover' data-trigger='hover' data-placement='bottom' data-content='Delete'><i class='fas fa-trash'></i></button>"
         }, orderable: false}
     ];
 
@@ -339,6 +326,13 @@
                         window.location.href = "{{ url('transaction')}}";;
                     });
                 }
+            }
+        },
+        computed: {
+            productsSearch() {
+                return this.products.filter(product => {
+                    return product.name.toLowerCase().includes(this.search.toLowerCase());
+                });
             }
         }
     }).mount('#app')

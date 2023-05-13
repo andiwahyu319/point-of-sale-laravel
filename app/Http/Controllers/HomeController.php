@@ -54,7 +54,7 @@ class HomeController extends Controller
                 break;
             case "transaction":
                 $transactions = Transaction::select(Transaction::raw("users.name as cashier"), "transactions.*")
-                ->join("users", "users.id", "=", "transactions.cashier_id")->get();
+                ->join("users", "users.id", "=", "transactions.cashier_id")->latest()->get();
                 foreach ($transactions as $key => $transaction) {
                     $total_transaction = 0;
                     $transaction["cart"] = TransactionDetail::select("transaction_details.id", "products.name", "products.img", "products.price", "transaction_details.qty")

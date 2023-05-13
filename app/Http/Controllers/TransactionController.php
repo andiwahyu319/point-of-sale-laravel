@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\TransactionDetail;
 use Illuminate\Http\Request;
@@ -44,15 +45,11 @@ class TransactionController extends Controller
         $request["cart"] = $cart;
         $this->validate($request, [
             "cashier_id" => "required|int",
-            "buyer" => "required",
-            "payment_via" => "required|in:cash,credit card",
-            "card" => "required_if:payment_via,credit card"
+            "payment_via" => "required|in:cash,credit card"
         ]);
         $transaction = new Transaction;
         $transaction->cashier_id = $request->cashier_id;
-        $transaction->buyer = $request->buyer;
         $transaction->payment_via = $request->payment_via;
-        $transaction->card = ($request->payment_via == "cash") ? "-" : $request->card;
         $transaction->save();
         $transaction_id = $transaction->id;
         for ($i=0; $i < count($cart); $i++) { 
@@ -61,6 +58,7 @@ class TransactionController extends Controller
             $detail->product_id = $cart[$i]->product_id;
             $detail->qty = $cart[$i]->qty;
             $detail->save();
+            Product::where("id", $cart[$i]->product_id)->decrement("qty", $cart[$i]->qty);
         }
         return redirect("transaction");
     }
@@ -97,14 +95,10 @@ class TransactionController extends Controller
     public function update(Request $request, Transaction $transaction)
     {
         $this->validate($request, [
-            "buyer" => "required",
-            "payment_via" => "required|in:cash,credit card",
-            "card" => "required_if:payment_via,credit card"
+            "payment_via" => "required|in:cash,credit card"
         ]);
         $transaction->update([
-            "buyer" => $request->buyer,
-            "payment_via" => $request->payment_via,
-            "card" => ($request->payment_via == "cash") ? "-" : $request->card
+            "payment_via" => $request->payment_via
         ]);
         return redirect("transaction");
     }

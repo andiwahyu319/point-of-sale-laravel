@@ -16,9 +16,7 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('cashier_id');
-            $table->string('buyer', 64);
             $table->enum('payment_via', ['cash', 'credit card']);
-            $table->string('card', 32)->default("-");
             $table->timestamps();
 
             $table->foreign('cashier_id')->references('id')->on('users');
